@@ -1,0 +1,29 @@
+# Import the libraries
+import numpy as np
+import pandas as pd
+
+# Loads the csv file and displays the size
+ip = pd.read_excel('Raw Data File.xlsx', header=[1]) # Note file name
+raw = ip.round(2) # Specified number of decimal places
+
+# Example iloc to select specific row or column from the raw data set (A to B) etc
+df1 = raw.iloc[:, [A,B]].set_index('Retention time')
+df2 = raw.iloc[:, [C,D]].set_index('Retention time.1')
+df3 = raw.iloc[:, [E,F]].set_index('Retention time.2')
+df4 = raw.iloc[:, [G,H]].set_index('Retention time.3')
+
+# Example concatenation of individual arrays followed by sorting by index values
+result = pd.concat([df1, df2, df3, df4])
+Total = result.sort_index()
+
+# All samples grouped by index (Retention Time)
+Totalx = Total.groupby(Total.index).sum(min_count=1) #min_count=1
+
+# NaN replaced by filled in by the previous non-null value
+Totalx.fillna(method="ffill", inplace=True) #inplace=True
+
+# Noting if the first value in the array is NaN, it will not have a previous non-null value, so the row (observation is dropped)
+Totalx = Totalx.iloc[1:]
+
+# Export to csv file
+Totalx.to_csv('Example data.csv', header=True)
